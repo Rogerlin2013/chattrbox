@@ -9,7 +9,7 @@ function registerOpenHandler(handlerFunction) {
     socket.onopen = () => {
         console.log('open');
         handlerFunction();
-    }
+    };
 }
 
 function registerMessageHandler(handlerFunction) {
@@ -17,7 +17,14 @@ function registerMessageHandler(handlerFunction) {
         console.log('message', e.data);
         let data = JSON.parse(e.data);
         handlerFunction(data);
-    }
+    };
+}
+
+function registerCloseHandler(handlerFunction) {
+    socket.onclose = () => {
+        console.log('close');
+        handlerFunction();
+    };
 }
 
 function sendMessage(payload) {
@@ -28,5 +35,6 @@ export default {
     init,
     registerOpenHandler,
     registerMessageHandler,
-    sendMessage
+    sendMessage,
+    registerCloseHandler
 }
