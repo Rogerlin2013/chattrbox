@@ -1,4 +1,16 @@
 import $ from 'jquery'
+import md5 from 'crypto-js/md5'
+import moment from 'moment';
+
+function createGravatarUrl(username) {
+    let userhash = md5(username);
+    return `http://www.gravatar.com/avatar/${userhash.toString()}`;
+}
+
+export function promptForUsername() {
+    let username = prompt('Enter a username');
+    return username.toLowerCase();
+}
 
 export class ChatForm {
     constructor(formSel, inputSel) {
@@ -43,7 +55,7 @@ export class ChatList {
         $message.append($('<span>', {
             'class': 'timestamp',
             'data-time': t,
-            text: (new Date(t)).getTime()
+            text: moment(t).fromNow()
         }));
 
         $message.append($('<span>', {
@@ -51,8 +63,25 @@ export class ChatList {
             text: m
         }));
 
+        let $img = $('<img>', {
+            src: createGravatarUrl(u),
+            title: u
+        });
+
+        $messageRow.append($img);
         $messageRow.append($message);
         $(this.$list).append($messageRow);
         $messageRow.get(0).scrollIntoView();
+    }
+
+    init() {
+        this.timer = setInterval(() => {
+            $('[data-time]').each((idx, element) => {
+                let $element = $(element);
+                let timestamp = new Date().setTime($element.attr('data-time'));
+                let ago = moment(timestamp).fromNow();
+                $element.html(ago);
+            });
+        }, 1000);
     }
 }
